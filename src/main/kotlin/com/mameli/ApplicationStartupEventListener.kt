@@ -1,6 +1,6 @@
 package com.mameli
 
-import com.sun.org.slf4j.internal.LoggerFactory
+import org.slf4j.LoggerFactory
 import org.springframework.boot.context.event.ApplicationStartedEvent
 import org.springframework.context.ApplicationListener
 import org.springframework.web.client.HttpClientErrorException
@@ -19,6 +19,8 @@ open class ApplicationStartupEventListener(private val warmupOperations: Collect
         warmup(port)
 
         warmupOperations.forEach { it.invoke() }
+
+        log.info("Warmup complete")
     }
 
     private fun warmup(port: Int) {
