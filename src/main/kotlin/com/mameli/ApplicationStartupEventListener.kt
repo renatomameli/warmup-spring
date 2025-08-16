@@ -10,24 +10,22 @@ open class ApplicationStartupEventListener(private val warmupOperations: Collect
     ApplicationListener<ApplicationStartedEvent> {
 
     companion object {
+        const val LOCALHOST_PATH: String = "http://localhost:"
         const val DUMMY_HTTP_PATH: String = "/api/dummy-warmup"
         private val log = LoggerFactory.getLogger(ApplicationStartupEventListener::class.java)
     }
 
     override fun onApplicationEvent(event: ApplicationStartedEvent) {
-        val port = event.applicationContext.environment.getProperty("local.server.port")?.toIntOrNull()?: 8080
-        warmup(port)
+        sendDummyRequest(event.applicationContext.environment.getProperty("local.server.port")?.toIntOrNull()?: 8080)
 
         warmupOperations.forEach { it.invoke() }
 
         log.info("Warmup complete")
     }
 
-    private fun warmup(port: Int) {
-        val dummyRequestUrl = "http://localhost:$port$DUMMY_HTTP_PATH"
-
+    private fun sendDummyRequest(port: Int) {
         try {
-            RestTemplate().getForObject(dummyRequestUrl, Void::class.java)
+            RestTemplate().getForObject("$LOCALHOST_PATH$port$DUMMY_HTTP_PATH", Void::class.java)
         } catch (_: HttpClientErrorException) {
             // Always fails
         }
