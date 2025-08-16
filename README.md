@@ -6,12 +6,11 @@ This is achieved by a simple dummy HTTP request sent to the application itself.
 ## Usage
 
 Other warmup operations can be implemented by implementing the `WarmupOperation` interface and register it as bean.
-These beans are automatically collected and its implementations will also be exeucted on startup.
+These beans are automatically collected and its implementations will also be executed on startup.
 
-
-This library was tested extensively under various conditions to measure cold-start response time. Each test measured the first HTTP request latency right after application startup — the worst-case scenario for many Spring Boot applications.
 
 ## Average Results (over many test runs):
+Latency of the first HTTP request:
 - Without warmup: ~53 ms
 - With warmup: ~8 ms
 
