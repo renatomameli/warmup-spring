@@ -3,7 +3,7 @@ package com.mameli
 import org.slf4j.LoggerFactory
 import org.springframework.boot.context.event.ApplicationStartedEvent
 import org.springframework.context.ApplicationListener
-import org.springframework.web.client.HttpClientErrorException
+import org.springframework.http.HttpMethod
 import org.springframework.web.client.RestTemplate
 
 open class ApplicationStartupEventListener(private val warmupOperations: Collection<WarmupOperation>) :
@@ -25,9 +25,9 @@ open class ApplicationStartupEventListener(private val warmupOperations: Collect
 
     private fun sendDummyRequest(port: Int) {
         try {
-            RestTemplate().getForObject("$LOCALHOST_PATH$port$DUMMY_HTTP_PATH", Void::class.java)
-        } catch (_: HttpClientErrorException) {
-            // Always fails
+            RestTemplate().exchange("$LOCALHOST_PATH$port$DUMMY_HTTP_PATH", HttpMethod.GET, null, String::class.java)
+        } catch (_: Exception) {
+            // Ignore
         }
 
         log.debug("Dummy request has been sent")

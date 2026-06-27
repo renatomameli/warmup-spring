@@ -9,16 +9,20 @@ Other warmup operations can be implemented by implementing the `WarmupOperation`
 These beans are automatically collected and its implementations will also be executed on startup.
 
 
-## Average Results (over many test runs):
-Latency of the first HTTP request:
-- Without warmup: ~53 ms
-- With warmup: ~8 ms
+## Benchmarks
 
-That’s an average improvement of around 6.5x in response time.
+JMH benchmark measuring the first HTTP request response time after application startup.
 
-## How It Was Tested
-- Warmup was tested multiple times manually using Postman.
-- After starting the Spring Boot application, the first request was triggered via Postman.
-- Warmup was tested with and without the library enabled.
-- All values were recorded manually across several runs to ensure reliability.
+| Scenario | Mean | Forks |
+|---|---|---|
+| Without warmup | 103.179 ± 58.328 ms | 83, 101, 101, 105, 126 ms |
+| With warmup | 2.949 ± 1.302 ms | 2.5, 2.9, 2.9, 3.0, 3.4 ms |
+
+The warmup dummy request absorbs DispatcherServlet initialization, class loading, and JIT compilation during startup, making the first user request **~35x faster**.
+
+### Running the Benchmarks
+
+```bash
+JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 ./gradlew runJmh
+```
 
